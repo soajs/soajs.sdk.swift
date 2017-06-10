@@ -79,7 +79,7 @@ class Utils {
     /// - Returns: <#return value description#>
     func constructHeader(headerParams: [String: AnyObject]) -> String {
         var header: String = ""
-
+        
         if (headerParams).isEmpty {
             return header
         }

@@ -68,43 +68,51 @@ class SoajsSdkTester: UIViewController {
         //        let cnx = SoajsConnection(secureProtocol: false, host: host, port: port")
 
         // or your can initialize it using the controller port and the service name
-        let host = "192.168.5.108"
+        let host = "10.0.0.14"
         let controllerPort = "4000"
-        let serviceName = "project"
+        let serviceName = "soajstestsdkproject"
 
         let cnx = SoajsConnection(secureProtocol: false, host: host, controllerPort: controllerPort, serviceName: serviceName)
         let soajsSdk = SoajsSdk(soajsConnection: cnx)
-        // now soajs sdk is ready to send requests and to get responses
-
-        // set your headers
-        let headers = ["headerParam1": "hp1" as AnyObject,
-            "headerParam2": "hp2" as AnyObject]
-
-        soajsSdk.get(path: "soajsTestSdkGet", headerParams: headers) { (result) -> () in
-            self.viewOutput(result: result)
+        
+        soajsSdk.login(username: "owner", paswword: "password"){ (userLoginResponse) -> () in
+            // now soajs sdk is ready to send requests and to get responses
+            print(userLoginResponse)
+            
+            // set your headers
+            let headers = ["headerParam1": "hp1" as AnyObject,
+                           "headerParam2": "hp2" as AnyObject]
+            
+            soajsSdk.get(path: "soajsTestSdkGet", headerParams: headers) { (result) -> () in
+                self.viewOutput(result: result)
+            }
+            
+            soajsSdk.delete(path: "soajsTestSdkDel", headerParams: headers) { (result) -> () in
+                self.viewOutput(result: result)
+            }
+            
+            // set your body
+            let body = [
+                "bodyParam1": "bp1" as AnyObject,
+                "bodyParam2": "bp2" as AnyObject
+            ]
+            
+            soajsSdk.post(path: "soajsTestSdkPost", headerParams: headers, body: body) { (result) -> () in
+                self.viewOutput(result: result)
+            }
+            
+            soajsSdk.put(path: "soajsTestSdkPut", headerParams: headers, body: body) { (result) -> () in
+                self.viewOutput(result: result)
+            }
+            
+//            soajsSdk.logout(){ (userLogoutResponse) -> () in
+//                print(userLogoutResponse)
+//            }
+            
         }
-
-        soajsSdk.delete(path: "soajsTestSdkDel", headerParams: headers) { (result) -> () in
-            self.viewOutput(result: result)
-        }
-
-        // set your body
-        let body = [
-            "bodyParam1": "bp1" as AnyObject,
-            "bodyParam2": "bp2" as AnyObject
-        ]
-
-        soajsSdk.post(path: "soajsTestSdkPost", headerParams: headers, body: body) { (result) -> () in
-            self.viewOutput(result: result)
-        }
-
-        soajsSdk.put(path: "soajsTestSdkPut", headerParams: headers, body: body) { (result) -> () in
-            self.viewOutput(result: result)
-        }
-
     }
 
-    func viewOutput(result: NSMutableDictionary) {
+    func viewOutput(result: [String : AnyObject]) {
         if(result["error"] as! Bool) {
             print("Host unreachable ...") // u also have the error description in errorMessage
         } else {
